@@ -1,26 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.osgi.org/xmlns/blueprint/v1.0.0 https://www.osgi.org/xmlns/blueprint/v1.0.0/blueprint.xsd                            http://camel.apache.org/schema/blueprint http://camel.apache.org/schema/blueprint/camel-blueprint.xsd">
     <camelContext id="ctx_bv_integracion_botonpago" xmlns="http://camel.apache.org/schema/blueprint">
         <propertyPlaceholder id="properties" location="classpath:/conf.properties"/>
-        <restConfiguration component="restlet" port="{{middleware.integracion.puerto}}">
-        </restConfiguration>
-
+        <restConfiguration component="restlet" port="{{middleware.integracion.puerto}}"/>
         <!-- Configuracion de boton de pago -->
         <rest path="/bicevida/boton/pago">
-        	<get uri="/services/ping">
+            <get uri="/services/ping">
                 <route>
                     <log id="_logOK" message="PING OK [bv-mandato-pat]"/>
                 </route>
             </get>
-        
             <!-- Configuracion de historial de pago y aportes -->
             <get outType="java.lang.String" produces="application/json" uri="/consultarHistorialPagosyAportes/{rut}/{poliza}/{fechadesde}/{fechahasta}">
                 <to uri="direct-vm:consultarhistorialpago"/>
             </get>
-            
-            <!--  Configuracion de mandato pat -->
+            <!-- Configuracion de mandato pat -->
             <post outType="java.lang.String" produces="application/json"
                 type="cl.bicevida.object.InObtieneProducto" uri="/obtenerDetalleProductos/">
                 <to uri="direct-vm:obtenerDetalleProductos"/>
@@ -42,6 +37,61 @@
             <post outType="java.lang.String" produces="application/json"
                 type="cl.bice.vida.sam.vista.ws.MandatoDtoIn" uri="/validaAutorizacion/">
                 <to uri="direct-vm:validaAutorizacion"/>
+            </post>
+            <!--             CONFIGURACION BOTON DE PAGO PRIMA -->
+            <get outType="java.lang.String" produces="application/json" uri="/consultaDeudaPrima/{rut}">
+                <to uri="direct-vm:consultaDeudaPrima"/>
+            </get>
+            <post outType="java.lang.String" produces="application/json"
+                type="cl.bicevida.object.PagoPublicoVO" uri="/confirmarProductoPrima">
+                <to uri="direct-vm:confirmaProductoPrima"/>
+            </post>
+            <post outType="java.lang.String" produces="application/json"
+                type="cl.bicevida.object.PagoPublicoVO" uri="/confirmarMedioPagoPrima">
+                <to uri="direct-vm:confirmaMedioPagoPrima"/>
+            </post>
+            <post outType="java.lang.String" produces="application/json"
+                type="cl.bicevida.object.PagoPublicoVO" uri="/verificaComprobantePrima">
+                <to uri="direct-vm:verificaComprobantePrima"/>
+            </post>
+            <post outType="java.lang.String" produces="application/json"
+                type="cl.bicevida.object.InCorreo" uri="/enviarEmailPrima">
+                <to uri="direct-vm:enviaCorreoPrima"/>
+            </post>
+            <get outType="java.lang.String" produces="application/json" uri="/pdfPlanilla/{rut}">
+                <to uri="direct-vm:pdfPlanilla"/>
+            </get>
+            <!--             			CONFIGURACION BOTON DE PAGO APORTE EXTRAORDINARIO -->
+            <get outType="java.lang.String" produces="application/json" uri="/consultaDeudaAPT/{rut}">
+                <to uri="direct-vm:consultaDeudaAPT"/>
+            </get>
+            <post outType="java.lang.String" produces="application/json"
+                type="cl.bicevida.object.PagoPublicoVO" uri="/distribuirProducto">
+                <to uri="direct-vm:distribuirProducto"/>
+            </post>
+            <post outType="java.lang.String" produces="application/json"
+                type="cl.bicevida.object.PagoPublicoVO" uri="/confirmarDistribucion">
+                <to uri="direct-vm:confirmarDistribucion"/>
+            </post>
+            <post outType="java.lang.String" produces="application/json"
+                type="cl.bicevida.object.PagoPublicoVO" uri="/confirmaProductoAPT">
+                <to uri="direct-vm:confirmaProductoAPT"/>
+            </post>
+            <post outType="java.lang.String" produces="application/json"
+                type="cl.bicevida.object.PagoPublicoVO" uri="/confirmaMedioPagoAPT">
+                <to uri="direct-vm:confirmaMedioPagoAPT"/>
+            </post>
+            <post outType="java.lang.String" produces="application/json"
+                type="cl.bicevida.object.PagoPublicoVO" uri="/verificarComprobanteAPT">
+                <to uri="direct-vm:verificarComprobanteAPT"/>
+            </post>
+            <post outType="java.lang.String" produces="application/json"
+                type="cl.bicevida.object.InCorreo" uri="/enviarEmailAPT">
+                <to uri="direct-vm:enviaCorreoAPT"/>
+            </post>
+            <post outType="java.lang.String" produces="application/json"
+                type="cl.bicevida.object.PagoPublicoVO" uri="/cancelar">
+                <to uri="direct-vm:cancelar"/>
             </post>
         </rest>
     </camelContext>
