@@ -15,6 +15,9 @@
             <get outType="java.lang.String" produces="application/json" uri="/consultarHistorialPagosyAportes/{rut}/{poliza}/{fechadesde}/{fechahasta}">
                 <to uri="direct-vm:consultarhistorialpago"/>
             </get>
+            <get outType="java.lang.String" produces="application/json" uri="/consultaGlosa/{rut}/{numeroContrato}">
+                <to uri="direct-vm:consulaGlosa"/>
+            </get>
             <!-- Configuracion de mandato pat -->
             <post outType="java.lang.String" produces="application/json"
                 type="cl.bicevida.object.InObtieneProducto" uri="/obtenerDetalleProductos/">
